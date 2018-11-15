@@ -1,0 +1,11 @@
+{
+  "parserOptions": {
+    "emcaVersion": 6
+  }
+  "env": {
+    "browser": true,
+    "node": false,
+    "commonjs": false,
+    "es6": true
+  }
+}
