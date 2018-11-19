@@ -1,30 +1,36 @@
 import Base from "./Base";
-import { diceNames } from "./names";
+import { diceName } from "./names";
 import { generateRarity } from "./rarities";
 import { getColor } from "./colors";
 
-export default class Dice extends Base {
-  constructor() {
-    super(name, color, rarity, cost);
-    this.sides = sides;
-    this.weight = 0;
-    // TODO: weight will be object with which side is weighted more and the ratio
-    // it is weighted more, with 1 being a normal ratio
-    // i.e. 20: 0.9 - more likely to roll 20 because it has less weight
-    // 20: 1.4 - less likely to roll a 20 because it weighs more
-    this.weights = sides.foreach(key => {
-      if (!weights[key]) weights[key] = 1;
-      this.weight += weights[key];
-    });
-  }
+export default class DiceClass extends Base {
+	constructor() {
+		// TODO: figure out cost
+		super(diceName(), getColor(), generateRarity(), 10);
+		this.weights = { 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1 };
+		this.sides = [1, 2, 3, 4, 5, 6];
+		this.weight = 0;
+		// TODO: dice layout so heavy weights prefer opposite side of dice rather than decreasing chance of rolling
+		this.sides.forEach(key => {
+			if (!this.weights[key]) this.weights[key] = 1;
+			this.weight += this.weights[key];
+		});
+		this.lastRoll = 0;
+		this.distribution = {};
+	}
 
-  roll = () => {
-    let rand = Math.random() * this.weight;
-    return this.sides.filter(v => {
-      if (this.weights[v] < rand) return true;
-      rand - this.weights[v];
-      return false;
-    });
-    // TODO: take into account weight
-  };
+	roll = () => {
+		console.log(this.distribution);
+		let rand = Math.random() * this.weight;
+		return this.sides.find(v => {
+			if (this.weights[v] > rand) {
+				if (this.distribution[v]) this.distribution[v]++;
+				else this.distribution[v] = 1;
+				this.lastRoll = v;
+				return true;
+			}
+			rand -= this.weights[v];
+			return false;
+		});
+	};
 }
